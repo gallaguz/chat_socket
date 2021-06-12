@@ -1,0 +1,30 @@
+In case others come across this same problem, I was able to fix it as follows:
+
+Open file:
+"node_modules\vue-socket.io\dist\vue-socketio.js"
+
+search for the following string (without the ""):
+"t.prototype.$socket=this.io,t.prototype.$vueSocketIo=this"
+
+replace it with the following (again without the ""):
+"t.config.globalProperties.$socket=this.io,t.provide('socket',this.io),t.config.globalProperties.$vueSocketIo=this"
+
+Then you can use it in Vue 3 (main.js) as follows:
+
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import SocketIO from 'socket.io-client'
+import VueSocketIO from 'vue-socket.io'
+
+const optionsVueIO = {
+  debug: true,
+  connection: SocketIO('http://localhost:3000')
+}
+
+const app = createApp(App).use(router).use(new VueSocketIO(optionsVueIO))
+app.mount('#app')
+To use the socket in the composition api (in a component) declare it as follows:
+
+const socket = inject('socket')
+console.log(socket)
